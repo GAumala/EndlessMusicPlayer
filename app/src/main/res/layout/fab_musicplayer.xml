@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.truizlop.fabreveallayout.FABRevealLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/fab_reveal_layout"
+android:layout_width="match_parent"
+android:layout_gravity="end|bottom"
+android:layout_height="@dimen/fab_reveal_height" >
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fab"
+        android:layout_marginRight="16dp"
+        android:tint="@android:color/white"
+        android:src="@drawable/ic_play_arrow_36dp"
+        />
+
+    <RelativeLayout
+        android:id="@+id/main_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </RelativeLayout>
+
+    <include layout="@layout/bar_musicplayer" />
+
+</com.truizlop.fabreveallayout.FABRevealLayout>

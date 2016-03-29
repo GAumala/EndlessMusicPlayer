@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/secondary_view"
+    android:layout_height="@dimen/fab_reveal_height">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/colorPrimary"
+            android:gravity="center">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/song_title"
+                android:maxLines="1"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:text="Borderline With My Atoms" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:id="@+id/song_artist"
+                android:textColor="@android:color/white"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="Hiatus Kaiyote"/>
+        </LinearLayout>
+        <endlessmusicplayer.ui.materialplaypause.PlayPauseView
+            android:layout_width="72dp"
+            android:id="@+id/play_pause_btn"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_weight="0"
+            android:clickable="true"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_gravity="top|start"
+        android:layout_height="4dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/horizontal_progress"
+        android:max="100"
+        />
+</FrameLayout>
