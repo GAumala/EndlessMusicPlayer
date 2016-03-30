@@ -150,6 +150,11 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
         val trackUri = ContentUris.withAppendedId(
         android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId)
         try{
+            if(status != PlaybackStatus.stopped) { //We are changing songs, do some cleanup and "stop" playback
+                player!!.reset()
+                handler.removeCallbacks(updateRunnable)
+                status = PlaybackStatus.stopped
+            }
             player!!.setDataSource(applicationContext, trackUri);
             player!!.prepareAsync();
         }

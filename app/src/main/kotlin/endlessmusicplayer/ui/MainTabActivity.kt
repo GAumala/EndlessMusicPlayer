@@ -138,7 +138,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
         //animate fab layout
         if(fabLayoutIsVisible && fabIsVisible)
             revealMusicPlaybackBar()
-        else if(fabIsVisible){
+        else {
             val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_up);
             anim.setAnimationListener(object : Animation.AnimationListener{
                 override fun onAnimationStart(p0: Animation?) {
@@ -146,7 +146,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
                 override fun onAnimationRepeat(p0: Animation?) {
                 }
                 override fun onAnimationEnd(p0: Animation?) {
-                    revealMusicPlaybackBar()
+                    if(fabIsVisible) revealMusicPlaybackBar()
                 }
             })
             fab_layout.startAnimation(anim)
@@ -156,8 +156,8 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
     }
 
     private fun updateProgressBar(prog : Long, max : Long) {
-        val prog = 100 * prog/max
-        progressbar?.progress = prog.toInt()
+        val percentage = 100 * prog/max
+        progressbar?.progress = percentage.toInt()
     }
     private fun displayCurrentSong(id : Long){
         val song = getRealm()!!.where(Song::class.java).equalTo("id", id).findFirst()

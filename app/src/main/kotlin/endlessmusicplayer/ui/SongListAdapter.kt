@@ -37,7 +37,7 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.SongViewHolder>{
             holder.subText.text = currentSong.artist
             holder.rightSubText.text = TimeConverter.timeToMinutes(currentSong.duration)
 
-            holder.leftImage.setOnClickListener({ view ->
+            (holder.leftImage.parent as View).setOnClickListener({ view ->
                 Log.d("SongListFragment", "clicked")
                 val results = realmResults
                 if(results != null) {
