@@ -53,11 +53,11 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
 
     private val playbackListener = object : PlaybackListener() {
         override fun onPlaybackStarted() {
-            btnPlayPause?.toggle()
+            btnPlayPause?.playing = true
         }
 
         override fun onPlaybackPaused() {
-            btnPlayPause?.toggle()
+            btnPlayPause?.playing = false
         }
 
         override fun onPlaybackTick(id: Long, progress: Long) {
@@ -105,7 +105,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
         btnPlayPause!!.setOnClickListener({
             musicService?.toggleMusicPlayback()
         })
-        btnPlayPause!!.toggle()
+        btnPlayPause!!.playing = false
 
        val toolbar = findViewById(R.id.toolbar) as Toolbar
        setSupportActionBar(toolbar)
@@ -169,7 +169,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
     override fun onMusicServiceBinded(status: PlaybackStatus) {
         if(status != PlaybackStatus.stopped && fabIsVisible) {
             revealMusicPlaybackBar()
-            if(status == PlaybackStatus.playing) btnPlayPause?.toggle()
+            if(status == PlaybackStatus.playing) btnPlayPause?.playing = true
         }
 
         if(status == PlaybackStatus.paused)

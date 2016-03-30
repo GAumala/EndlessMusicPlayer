@@ -38,6 +38,14 @@ class PlayPauseView(context: Context, attrs: AttributeSet) : FrameLayout(context
     private var mWidth: Int = 0
     private var mHeight: Int = 0
 
+    var playing : Boolean = true
+    set(value) {
+        if(value != playing) {
+            toggle()
+            field = value
+        }
+    }
+
     init {
         setWillNotDraw(false)
         color = ContextCompat.getColor(context, R.color.colorPrimary)
@@ -48,6 +56,8 @@ class PlayPauseView(context: Context, attrs: AttributeSet) : FrameLayout(context
 
         mPauseBackgroundColor = ContextCompat.getColor(context, R.color.colorPrimary)
         mPlayBackgroundColor = ContextCompat.getColor(context, R.color.colorPrimary)
+
+        playing = true
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
