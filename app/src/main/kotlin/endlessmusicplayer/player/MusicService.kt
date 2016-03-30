@@ -77,9 +77,8 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
             currentSong++;
             if(currentSong < currentPlayList.size){
                 playCurrentSong()
-            } else {
-                //Init random playlist
-            }
+            } else
+                setRandomPlaylist()
 
         } else {
            player?.release()
@@ -162,6 +161,23 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
             e.printStackTrace()
             Log.e("MUSIC SERVICE", "Error setting data source. song Id = $songId");
         }
+
+    }
+
+    public fun setRandomPlaylist(){
+        val newPlaylist = ArrayList<Long>()
+        val randomValues = ArrayList<Long>()
+        randomValues.addAll(songCollection)
+        while(randomValues.isNotEmpty()){
+            val rand = Random()
+            val index = rand.nextInt(randomValues.size)
+            newPlaylist.add(randomValues.removeAt(index))
+        }
+
+        currentPlayList = newPlaylist
+        currentSong = 0
+        playCurrentSong()
+
 
     }
 

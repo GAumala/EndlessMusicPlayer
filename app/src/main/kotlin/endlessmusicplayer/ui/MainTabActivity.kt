@@ -120,6 +120,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
        fab_layout =  findViewById(R.id.fab_reveal_layout) as FABRevealLayout
        val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener({
+            musicService?.setRandomPlaylist()
             revealMusicPlaybackBar()
         })
 
