@@ -164,6 +164,16 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
 
     }
 
+    fun navigatePlaylist(forward : Boolean){
+        if(forward && currentSong < currentPlayList.size) {
+            currentSong++
+            playCurrentSong()
+        }else if (!forward && currentSong > 0) {
+            currentSong--
+            playCurrentSong()
+        }
+    }
+
     public fun setRandomPlaylist(){
         val newPlaylist = ArrayList<Long>()
         val randomValues = ArrayList<Long>()

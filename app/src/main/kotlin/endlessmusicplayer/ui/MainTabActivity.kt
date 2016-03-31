@@ -147,6 +147,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
         }
     }
 
+    private var reverSet : AnimatorSet? = null
     private fun playTransition(){
         val appLayout = findViewById(R.id.appbarlayout)
         val appLayoutAnim = ObjectAnimator.ofFloat(appLayout, "y", appLayout.y, appLayout.y - appLayout.height)

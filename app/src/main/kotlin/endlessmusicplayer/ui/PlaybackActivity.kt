@@ -3,6 +3,10 @@ package endlessmusicplayer.ui
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.support.v4.view.VelocityTrackerCompat
+import android.util.Log
+import android.view.MotionEvent
+import android.view.VelocityTracker
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -31,6 +35,35 @@ class PlaybackActivity : MusicActivity() {
         btnPlayPause!!.setOnClickListener({
             musicService?.toggleMusicPlayback()
         })
+
+        findViewById(R.id.pager).setOnTouchListener ( object : View.OnTouchListener {
+            var pos : Float = -1f
+            override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
+                when(p1!!.actionMasked){
+                    MotionEvent.ACTION_DOWN -> {
+                        pos = p1.x
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+
+
+                    } MotionEvent.ACTION_UP -> {
+                        // Return a VelocityTracker object back to be re-used by others.
+                        if(pos != -1f && pos - p1.x > 200){
+                            musicService?.navigatePlaylist(true)
+                        } else if(pos != -1f && pos - p1.x < -200)
+                            musicService?.navigatePlaylist(false)
+
+                        pos = -1f
+
+
+                    }
+                }
+
+                return true
+            }
+
+        });
+
     }
 
     override fun onMusicServiceBinded(status: PlaybackStatus) {
