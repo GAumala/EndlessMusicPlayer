@@ -151,8 +151,11 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
     private fun playTransition(){
         val appLayout = findViewById(R.id.appbarlayout)
         val appLayoutAnim = ObjectAnimator.ofFloat(appLayout, "y", appLayout.y, appLayout.y - appLayout.height)
+        val appLayoutAnimReverse = ObjectAnimator.ofFloat(appLayout, "y", appLayout.y - appLayout.height, appLayout.y)
         val fabLayoutAnim = ObjectAnimator.ofFloat(fab_layout, "y", fab_layout.y, fab_layout.y + appLayout.height)
+        val fabLayoutAnimReverse = ObjectAnimator.ofFloat(fab_layout, "y", fab_layout.y + appLayout.height, fab_layout.y)
         val recyclerViewAnim = ObjectAnimator.ofFloat(viewPager, "alpha", 1.0f, 0f)
+        val recyclerViewAnimReverse = ObjectAnimator.ofFloat(viewPager, "alpha", 0f, 1.0f)
         //val bgAnim = ObjectAnimator.ofFloat(findViewById(R.id.container), "bac")
         val bgAnim = AnimatorInflater.loadAnimator(this, R.anim.white_to_black_object) as ObjectAnimator;
         bgAnim.target = findViewById(R.id.container);
@@ -163,10 +166,20 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
                 overridePendingTransition(0,0)
             }
         });
+        val bgAnimReverse = AnimatorInflater.loadAnimator(this, R.anim.black_to_white_object) as ObjectAnimator;
+        bgAnimReverse.target = findViewById(R.id.container);
+        bgAnimReverse.setEvaluator(ArgbEvaluator());
+
         val animSet = AnimatorSet()
         animSet.duration = 500
         animSet.playTogether(appLayoutAnim, fabLayoutAnim, recyclerViewAnim, bgAnim)
         animSet.startDelay = 100
+
+        reverSet = AnimatorSet()
+        reverSet!!.duration = 500
+        reverSet!!.playTogether(appLayoutAnimReverse, fabLayoutAnimReverse, recyclerViewAnimReverse,
+                bgAnimReverse)
+
         animSet.start()
 
     }
@@ -174,7 +187,14 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
 
 
     override fun onMusicServiceBinded(status: PlaybackStatus) {
-        if(status != PlaybackStatus.stopped && fabIsVisible) {
+        if(reverSet != null){
+            fab_layout.post {
+                reverSet?.start()
+                reverSet = null
+            }
+
+            if(status == PlaybackStatus.playing) btnPlayPause?.playing = true
+        } else if(status != PlaybackStatus.stopped && fabIsVisible) {
             revealMusicPlaybackBar()
             if(status == PlaybackStatus.playing) btnPlayPause?.playing = true
         }

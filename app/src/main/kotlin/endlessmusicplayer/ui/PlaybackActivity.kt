@@ -66,6 +66,11 @@ class PlaybackActivity : MusicActivity() {
 
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(0,0)
+    }
+
     override fun onMusicServiceBinded(status: PlaybackStatus) {
 
         if(status != PlaybackStatus.playing) btnPlayPause?.playing = false
