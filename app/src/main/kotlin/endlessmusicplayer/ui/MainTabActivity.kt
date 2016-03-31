@@ -1,5 +1,7 @@
 package endlessmusicplayer.ui
 
+import android.animation.*
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
@@ -8,11 +10,13 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.truizlop.fabreveallayout.FABRevealLayout
+import com.truizlop.fabreveallayout.OnRevealChangeListener
 import ec.orangephi.endlessmusicplayer.R
 import endlessmusicplayer.data.RealmActivity
 import endlessmusicplayer.data.Song
@@ -20,6 +24,7 @@ import endlessmusicplayer.player.MusicActivity
 import endlessmusicplayer.player.MusicService
 import endlessmusicplayer.player.PlaybackListener
 import endlessmusicplayer.player.PlaybackStatus
+import endlessmusicplayer.ui.anim.AnimatorEndListener
 import endlessmusicplayer.ui.interfaces.AdapterFragment
 import endlessmusicplayer.ui.interfaces.RealmAdmin
 import endlessmusicplayer.ui.interfaces.ScrollableActivity
@@ -51,37 +56,16 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
         }
     }
 
-    private val playbackListener = object : PlaybackListener() {
-        override fun onPlaybackStarted() {
-            btnPlayPause?.playing = true
-        }
-
-        override fun onPlaybackPaused() {
-            btnPlayPause?.playing = false
-        }
-
-        override fun onPlaybackTick(id: Long, progress: Long) {
-            if(currentSong == null && getRealm() == null)
-                return //DEAD ACTIVITY
-
-            if(currentSong == null || currentSong?.id != id){
-                displayCurrentSong(id)
-            }
-            val duration = currentSong!!.duration
-            updateProgressBar(progress, duration)
-        }
-    }
-
     private val myScrollListener = object : RecyclerView.OnScrollListener(){
                 override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                     if(fabLayoutIsVisible && dy > 0){
                         //Toast.makeText(this@MainTabActivity, "Hide", Toast.LENGTH_SHORT).show()
-                        val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_down);
+                        val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_out_down);
                         fab_layout.startAnimation(anim)
                         fabLayoutIsVisible = false
                     } else if(!fabLayoutIsVisible && dy < 0){
                         //Toast.makeText(this@MainTabActivity, "Show", Toast.LENGTH_SHORT).show()
-                        val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_up);
+                        val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_in_up);
                         fab_layout.startAnimation(anim)
                         fabLayoutIsVisible = true
                     }
@@ -121,6 +105,17 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
        val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener({
             musicService?.setRandomPlaylist()
+            fab_layout.setOnRevealChangeListener(object : OnRevealChangeListener{
+                override fun onSecondaryViewAppeared(p0: FABRevealLayout?, p1: View?) {
+                    fab_layout.setOnRevealChangeListener(null)
+                    playTransition()
+                }
+
+                override fun onMainViewAppeared(p0: FABRevealLayout?, p1: View?) {
+                    throw UnsupportedOperationException()
+                }
+
+            })
             revealMusicPlaybackBar()
         })
 
@@ -130,17 +125,13 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
 
     }
 
-    override fun getPlaybackListener(): PlaybackListener {
-        return playbackListener
-    }
-
     override fun startPlaylist(playlist: RealmResults<Song>, position: Int) {
         super.startPlaylist(playlist, position)
         //animate fab layout
         if(fabLayoutIsVisible && fabIsVisible)
             revealMusicPlaybackBar()
         else {
-            val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_up);
+            val anim = AnimationUtils.loadAnimation(applicationContext, R.anim.slide_in_up);
             anim.setAnimationListener(object : Animation.AnimationListener{
                 override fun onAnimationStart(p0: Animation?) {
                 }
@@ -156,16 +147,30 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
         }
     }
 
-    private fun updateProgressBar(prog : Long, max : Long) {
-        val percentage = 100 * prog/max
-        progressbar?.progress = percentage.toInt()
+    private fun playTransition(){
+        val appLayout = findViewById(R.id.appbarlayout)
+        val appLayoutAnim = ObjectAnimator.ofFloat(appLayout, "y", appLayout.y, appLayout.y - appLayout.height)
+        val fabLayoutAnim = ObjectAnimator.ofFloat(fab_layout, "y", fab_layout.y, fab_layout.y + appLayout.height)
+        val recyclerViewAnim = ObjectAnimator.ofFloat(viewPager, "alpha", 1.0f, 0f)
+        //val bgAnim = ObjectAnimator.ofFloat(findViewById(R.id.container), "bac")
+        val bgAnim = AnimatorInflater.loadAnimator(this, R.anim.white_to_black_object) as ObjectAnimator;
+        bgAnim.target = findViewById(R.id.container);
+        bgAnim.setEvaluator(ArgbEvaluator());
+        (bgAnim as Animator).addListener(object : AnimatorEndListener() {
+            override fun onAnimationEnd(p0: Animator?) {
+                startActivity(Intent(this@MainTabActivity, PlaybackActivity::class.java))
+                overridePendingTransition(0,0)
+            }
+        });
+        val animSet = AnimatorSet()
+        animSet.duration = 500
+        animSet.playTogether(appLayoutAnim, fabLayoutAnim, recyclerViewAnim, bgAnim)
+        animSet.startDelay = 100
+        animSet.start()
+
     }
-    private fun displayCurrentSong(id : Long){
-        val song = getRealm()!!.where(Song::class.java).equalTo("id", id).findFirst()
-        songTitle?.text = song.title
-        songArtist?.text = song.artist
-        currentSong = song
-    }
+
+
 
     override fun onMusicServiceBinded(status: PlaybackStatus) {
         if(status != PlaybackStatus.stopped && fabIsVisible) {

@@ -60,7 +60,42 @@ abstract open class MusicActivity : RealmActivity() {
         }
     }
 
-    abstract fun getPlaybackListener() : PlaybackListener
+    lateinit var mPlaybackListener : PlaybackListener
+    open fun getPlaybackListener() : PlaybackListener {
+        mPlaybackListener = object : PlaybackListener() {
+            override fun onPlaybackStarted() {
+                btnPlayPause?.playing = true
+            }
+
+            override fun onPlaybackPaused() {
+                btnPlayPause?.playing = false
+            }
+
+            override fun onPlaybackTick(id: Long, progress: Long) {
+                if(currentSong == null && getRealm() == null)
+                    return //DEAD ACTIVITY
+
+                if(currentSong == null || currentSong?.id != id){
+                    displayCurrentSong(id)
+                }
+                val duration = currentSong!!.duration
+                updateProgressBar(progress, duration)
+            }
+        }
+        return mPlaybackListener
+    }
+
+    open protected fun updateProgressBar(prog : Long, max : Long) {
+        val percentage = 100 * prog/max
+        progressbar?.progress = percentage.toInt()
+    }
+
+    open protected fun displayCurrentSong(id : Long){
+        val song = getRealm()!!.where(Song::class.java).equalTo("id", id).findFirst()
+        songTitle?.text = song.title
+        songArtist?.text = song.artist
+        currentSong = song
+    }
 
     open fun startPlaylist(playlist : RealmResults<Song>, position : Int){
         musicService?.startPlayback(playlist, position) ?: Log.e("MainTabActivity", "CANT PLAY SONGS")
@@ -85,6 +120,18 @@ abstract open class MusicActivity : RealmActivity() {
         }
     }
 
+    /**
+     * Removes the current playbackListener that the service holds. This must be called before
+     * going to other activivities because this activity's onStop() method may remove another
+     * activity's listener.
+     */
+    private fun removePlaybackListener(){
+        val mService = musicService
+        if(mService != null){
+            if(mService.playbackListener == mPlaybackListener)
+                mService.playbackListener = null
+        }
+    }
 
 
      override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +156,7 @@ abstract open class MusicActivity : RealmActivity() {
     override fun onStop() {
         currentSong = null
         if(musicBound) {
-            musicService?.playbackListener = null
+            removePlaybackListener()
             //gotta use application context for unbind http://stackoverflow.com/questions/10986408/unable-to-destroy-activity-service-is-not-registered
             applicationContext.unbindService(musicConnection)
         }
@@ -149,7 +196,6 @@ abstract open class MusicActivity : RealmActivity() {
      * activity should update its UI to reflect the current playback status
      * @param status the playback status of the MusicService
      */
-    open fun onMusicServiceBinded(status : PlaybackStatus){
+    abstract open fun onMusicServiceBinded(status : PlaybackStatus)
 
-    }
 }

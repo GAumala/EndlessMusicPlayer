@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/secondary_view"
-    android:layout_height="@dimen/fab_reveal_height">
+    android:id="@+id/ctrls"
+    android:layout_height="84dp">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:gravity="center">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@color/colorPrimary"
-            android:gravity="center">
-
-            <include layout="@layout/include_title_and_artist_text" />
-
-        </LinearLayout>
         <endlessmusicplayer.ui.materialplaypause.PlayPauseView
             android:layout_width="72dp"
             android:id="@+id/play_pause_btn"
