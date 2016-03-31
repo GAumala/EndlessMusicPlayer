@@ -1,5 +1,6 @@
 package endlessmusicplayer.ui
 
+import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
@@ -14,6 +15,7 @@ import ec.orangephi.endlessmusicplayer.R
 import endlessmusicplayer.player.MusicActivity
 import endlessmusicplayer.player.PlaybackListener
 import endlessmusicplayer.player.PlaybackStatus
+import endlessmusicplayer.ui.anim.AnimatorEndListener
 import endlessmusicplayer.ui.materialplaypause.PlayPauseView
 
 /**
@@ -67,8 +69,7 @@ class PlaybackActivity : MusicActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        overridePendingTransition(0,0)
+        playExitTransition()
     }
 
     override fun onMusicServiceBinded(status: PlaybackStatus) {
@@ -80,13 +81,31 @@ class PlaybackActivity : MusicActivity() {
             val ctrls_anim = ObjectAnimator.ofFloat(ctrls_layout, "y",
                     ctrls_layout.y + ctrls_layout.height, ctrls_layout.y)
             val artist_anim = ObjectAnimator.ofFloat(songArtist, "alpha", 0.0f, 1.0f)
-            val title_anim = ObjectAnimator.ofFloat(songArtist, "alpha", 0.0f, 1.0f)
+            val title_anim = ObjectAnimator.ofFloat(songTitle, "alpha", 0.0f, 1.0f)
             val animSet = AnimatorSet()
             animSet.duration = 200
             animSet.playTogether(ctrls_anim, artist_anim, title_anim)
             animSet.start()
         })
 
+    }
+
+    fun playExitTransition(){
+        val ctrls_anim = ObjectAnimator.ofFloat(ctrls_layout, "y",
+                    ctrls_layout.y, ctrls_layout.y + ctrls_layout.height)
+            val artist_anim = ObjectAnimator.ofFloat(songArtist, "alpha", 1.0f, 0.0f)
+            val title_anim = ObjectAnimator.ofFloat(songTitle, "alpha", 1.0f, 0.0f)
+            title_anim.addListener( object : AnimatorEndListener() {
+                override fun onAnimationEnd(p0: Animator?) {
+                    super@PlaybackActivity.onBackPressed()
+                    overridePendingTransition(0,0)
+                }
+
+            });
+            val animSet = AnimatorSet()
+            animSet.duration = 200
+            animSet.playTogether(ctrls_anim, artist_anim, title_anim)
+            animSet.start()
     }
 
 }

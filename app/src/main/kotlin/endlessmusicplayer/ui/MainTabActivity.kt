@@ -119,6 +119,10 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
             revealMusicPlaybackBar()
         })
 
+        findViewById(R.id.secondary_view).setOnClickListener{ v ->
+            playTransition()
+        }
+
         //musicService?.playbackListener = playbackListener
 
 
@@ -171,12 +175,12 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
         bgAnimReverse.setEvaluator(ArgbEvaluator());
 
         val animSet = AnimatorSet()
-        animSet.duration = 500
+        animSet.duration = 400
         animSet.playTogether(appLayoutAnim, fabLayoutAnim, recyclerViewAnim, bgAnim)
         animSet.startDelay = 100
 
         reverSet = AnimatorSet()
-        reverSet!!.duration = 500
+        reverSet!!.duration = 400
         reverSet!!.playTogether(appLayoutAnimReverse, fabLayoutAnimReverse, recyclerViewAnimReverse,
                 bgAnimReverse)
 
