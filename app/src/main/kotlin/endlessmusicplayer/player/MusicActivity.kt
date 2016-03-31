@@ -25,7 +25,8 @@ abstract open class MusicActivity : RealmActivity() {
 
     lateinit var playIntent : Intent
     protected var musicService : MusicService? = null
-    private var musicBound : Boolean = false
+    var musicBound : Boolean = false
+    private set
     protected val hasBoundService : Boolean
     get() = musicBound
 
@@ -166,8 +167,6 @@ abstract open class MusicActivity : RealmActivity() {
 
     override fun onBackPressed() {
         if(musicBound) {
-            if(musicService?.musicPlaybackStatus == PlaybackStatus.paused)
-                musicService?.stopMusicPlayback()
             musicBound = false
             applicationContext.unbindService(musicConnection)
             musicService = null;

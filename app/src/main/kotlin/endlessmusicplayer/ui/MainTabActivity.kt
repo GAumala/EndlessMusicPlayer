@@ -89,7 +89,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
         btnPlayPause!!.setOnClickListener({
             musicService?.toggleMusicPlayback()
         })
-        btnPlayPause!!.playing = false
+        //btnPlayPause!!.playing = false
 
        val toolbar = findViewById(R.id.toolbar) as Toolbar
        setSupportActionBar(toolbar)
@@ -129,6 +129,12 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
 
     }
 
+    override fun onBackPressed() {
+        if(musicBound && musicService?.musicPlaybackStatus == PlaybackStatus.paused)
+            musicService?.stopMusicPlayback()
+        super.onBackPressed()
+
+    }
     override fun startPlaylist(playlist: RealmResults<Song>, position: Int) {
         super.startPlaylist(playlist, position)
         //animate fab layout
@@ -191,20 +197,19 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
 
 
     override fun onMusicServiceBinded(status: PlaybackStatus) {
-        if(reverSet != null){
+        if(reverSet != null){ //returning from playbackActivity
             fab_layout.post {
                 reverSet?.start()
                 reverSet = null
             }
-
-            if(status == PlaybackStatus.playing) btnPlayPause?.playing = true
         } else if(status != PlaybackStatus.stopped && fabIsVisible) {
             revealMusicPlaybackBar()
-            if(status == PlaybackStatus.playing) btnPlayPause?.playing = true
         }
-
-        if(status == PlaybackStatus.paused)
+        if(status == PlaybackStatus.playing) btnPlayPause?.playing = true
+            else if(status == PlaybackStatus.paused) {
+            btnPlayPause?.playing = false
             displayCurrentSong(musicService!!.nowPlayingSong)
+        }
     }
 
    /*
