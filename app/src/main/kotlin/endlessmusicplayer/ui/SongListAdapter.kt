@@ -10,8 +10,10 @@ import android.widget.ImageButton
 import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
 import ec.orangephi.endlessmusicplayer.R
+import endlessmusicplayer.data.RealmRecyclerAdapter
 import endlessmusicplayer.data.Song
 import endlessmusicplayer.player.MusicActivity
+import io.realm.RealmObject
 import io.realm.RealmResults
 import utils.TimeConverter
 
@@ -20,32 +22,31 @@ import utils.TimeConverter
  * Created by gabriel on 3/16/16.
  */
 
-class SongListAdapter : RecyclerView.Adapter<SongListAdapter.SongViewHolder>{
+class SongListAdapter : RealmRecyclerAdapter{
 
-    private val mContext : Context
-    var realmResults : RealmResults<Song>?
-    constructor (ctx : Context, results : RealmResults<Song>) : super (){
-        mContext = ctx
-        realmResults = results
+    constructor(mContext : Context, results: RealmResults<Song>) : super(mContext,results as RealmResults<RealmObject>){
+
     }
 
-    override fun onBindViewHolder(mHolder : SongViewHolder?, position : Int) {
-        val currentSong = realmResults?.get(position) ?: Song()
-        val holder = mHolder
-        if(holder != null) {
-            holder.titleText.text = currentSong.title
-            holder.subText.text = currentSong.artist
-            holder.rightSubText.text = TimeConverter.timeToMinutes(currentSong.duration)
+    val songResults : RealmResults<Song>?
+            get() = realmResults as RealmResults<Song>?
 
-            (holder.leftImage.parent as View).setOnClickListener({ view ->
-                Log.d("SongListFragment", "clicked")
-                val results = realmResults
-                if(results != null) {
-                    val myActivity = mContext as MusicActivity
-                    myActivity.startPlaylist(results, position)
-                }
-            })
-        }
+
+    override fun onBindViewHolder(mHolder : RecyclerView.ViewHolder?, position : Int) {
+        val currentSong = songResults?.get(position)  ?: Song()
+        val holder = mHolder as SongViewHolder
+        holder.titleText.text = currentSong.title
+        holder.subText.text = currentSong.artist
+        holder.rightSubText.text = TimeConverter.timeToMinutes(currentSong.duration)
+
+        (holder.leftImage.parent as View).setOnClickListener({ view ->
+            Log.d("SongListFragment", "clicked")
+            val results = songResults
+            if(results != null) {
+                val myActivity = mContext as MusicActivity
+                myActivity.startPlaylist(results , position)
+            }
+        })
 
     }
 
