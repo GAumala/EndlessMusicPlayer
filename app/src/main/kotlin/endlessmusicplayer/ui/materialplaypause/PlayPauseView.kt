@@ -72,7 +72,8 @@ class PlayPauseView(context: Context, attrs: AttributeSet) : FrameLayout(context
         mWidth = w
         mHeight = h
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        /** Oval only works on lollipop
+         * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             outlineProvider = object : ViewOutlineProvider() {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 override fun getOutline(view: View, outline: Outline) {
@@ -80,7 +81,7 @@ class PlayPauseView(context: Context, attrs: AttributeSet) : FrameLayout(context
                 }
             }
             clipToOutline = true
-        }
+        }*/
     }
 
     override fun verifyDrawable(who: Drawable): Boolean {

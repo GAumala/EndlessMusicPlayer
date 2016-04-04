@@ -15,6 +15,7 @@ import io.realm.RealmResults
 open class RealmActivity : AppCompatActivity() {
     private var realm : Realm? = null
     lateinit var songList : RealmResults<Song>
+    lateinit var artistList : RealmResults<Artist>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +37,7 @@ open class RealmActivity : AppCompatActivity() {
     private fun initRealm() {
         realm = Realm.getDefaultInstance()
         songList = realm!!.where(Song::class.java).findAllAsync()
+        artistList = realm!!.where(Artist::class.java).findAllAsync()
     }
     open fun getRealm() : Realm? = realm
 }

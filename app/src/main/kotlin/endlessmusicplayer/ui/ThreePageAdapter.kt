@@ -31,7 +31,7 @@ abstract class ThreePageAdapter : CustomFragmentPagerAdapter {
 
     override fun getItem(p0: Int): Fragment {
         when (FragmentPages.values()[p0]){
-            FragmentPages.ARTISTS-> return Fragment()
+            FragmentPages.ARTISTS-> return ArtistGridFragment()
             FragmentPages.ALBUMS-> return  Fragment()
             FragmentPages.SONGS-> return SongListFragment()
         }

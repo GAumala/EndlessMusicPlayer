@@ -25,10 +25,10 @@ import io.realm.RealmResults
 
 class SongListFragment : RecyclerFragment(){
 
-    override val realmData: RealmResults<RealmObject>
+    override val realmData: RealmResults<RealmObject>?
         get() {
             val realmAdmin = activity as RealmAdmin
-            return realmAdmin.getAllSongs(ThreePageAdapter.FragmentPages.SONGS) as RealmResults<RealmObject>
+            return realmAdmin.getAllSongs(ThreePageAdapter.FragmentPages.SONGS) as RealmResults<RealmObject>?
         }
 
     override val fragmentLayout: Int

@@ -23,7 +23,7 @@ abstract class RecyclerFragment : Fragment() {
     lateinit var recyclerview : RecyclerView
     var listadapter : RealmRecyclerAdapter? = null
 
-    abstract val realmData : RealmResults<RealmObject>
+    abstract val realmData : RealmResults<RealmObject>?
 
     abstract fun newRecyclerAdapter(results : RealmResults<RealmObject>) : RealmRecyclerAdapter
 

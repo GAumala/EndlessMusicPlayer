@@ -12,9 +12,15 @@ import io.realm.RealmResults
 abstract class RealmRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>{
     protected val mContext : Context
     var realmResults : RealmResults<RealmObject>?
+
     constructor (ctx : Context, results : RealmResults<RealmObject>) : super (){
         mContext = ctx
         realmResults = results
+    }
+
+
+    override fun getItemCount(): Int {
+        return realmResults?.size ?: 0
     }
 
 }

@@ -50,9 +50,6 @@ class SongListAdapter : RealmRecyclerAdapter{
 
     }
 
-    override fun getItemCount(): Int {
-        return realmResults?.size ?: 0
-    }
 
     override fun onCreateViewHolder(parent : ViewGroup?, p1: Int): SongViewHolder? {
         val view = LayoutInflater.from(mContext).inflate(R.layout.song_list_item, parent, false);

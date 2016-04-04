@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -18,6 +19,7 @@ import android.widget.TextView
 import com.truizlop.fabreveallayout.FABRevealLayout
 import com.truizlop.fabreveallayout.OnRevealChangeListener
 import ec.orangephi.endlessmusicplayer.R
+import endlessmusicplayer.data.Artist
 import endlessmusicplayer.data.RealmActivity
 import endlessmusicplayer.data.Song
 import endlessmusicplayer.player.MusicActivity
@@ -224,8 +226,27 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
                 songList.addChangeListener(object : RealmChangeListener {
                     override fun onChange() {
                         songList.removeChangeListener(this)
-                        val songFragment = adapter.getFragmentForPosition(ThreePageAdapter.FragmentPages.SONGS.ordinal) as AdapterFragment
+                        val songFragment = adapter.getFragmentForPosition(ThreePageAdapter.FragmentPages.SONGS.ordinal) as RecyclerFragment
                         songFragment.setData(songList as RealmResults<RealmObject>)
+                    }
+                })
+
+        }
+        return null
+
+    }
+
+    override fun getAllArtists(page: ThreePageAdapter.FragmentPages): RealmResults<Artist>? {
+        val myRealm = getRealm()
+        if (myRealm != null) {
+            if(artistList.isLoaded)
+                return artistList
+            else
+                artistList.addChangeListener(object : RealmChangeListener {
+                    override fun onChange() {
+                        artistList.removeChangeListener(this)
+                        val artistFragment = adapter.getFragmentForPosition(ThreePageAdapter.FragmentPages.ARTISTS.ordinal) as RecyclerFragment
+                        artistFragment.setData(artistList as RealmResults<RealmObject>)
                     }
                 })
 

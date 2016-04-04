@@ -1,5 +1,6 @@
 package endlessmusicplayer.ui.interfaces
 
+import endlessmusicplayer.data.Artist
 import endlessmusicplayer.data.Song
 import endlessmusicplayer.ui.ThreePageAdapter
 import io.realm.RealmResults
@@ -16,4 +17,5 @@ interface RealmAdmin {
      * else return null, but perform the query asynchronously and then update the fragment.
      */
     abstract  fun getAllSongs(page : ThreePageAdapter.FragmentPages) : RealmResults<Song>?
+    abstract  fun getAllArtists(page : ThreePageAdapter.FragmentPages) : RealmResults<Artist>?
 }
