@@ -30,7 +30,7 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
     val nowPlayingPosition : Long
     get() {
         val mPlayer = player
-        if(mPlayer != null  && status != PlaybackStatus.stopped)
+        if(mPlayer != null  && status.isActive)
             return mPlayer.currentPosition.toLong()
         else
             return 0L
@@ -43,7 +43,7 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
     private val TICK_DURATION = 500L
     private val handler = Handler()
     var playbackListener : PlaybackListener? = null
-    private var status = PlaybackStatus.stopped
+    private var status = PlaybackStatus.ready
     set(value) {
         when (value){
             PlaybackStatus.playing -> playbackListener?.onPlaybackStarted()
@@ -61,7 +61,7 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
                 songPosition += TICK_DURATION
             }
 
-            if(status != PlaybackStatus.stopped){
+            if(status.isActive){
                 handler.postDelayed(this, TICK_DURATION)
             }
         }
@@ -92,7 +92,7 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
     override fun onPrepared(p0: MediaPlayer?) {
         player?.start()
         songPosition = 0
-        if(status == PlaybackStatus.stopped) {
+        if(status == PlaybackStatus.ready) {
             status = PlaybackStatus.playing
             updateRunnable.run()
         }
@@ -107,7 +107,7 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
     override fun onRebind(intent: Intent?) {
         //Log.d("MusicService", "rebind service ")
         val mPlayer = player
-        if(mPlayer != null && status != PlaybackStatus.stopped) //currentPosition may be higher that the last one we calculated
+        if(mPlayer != null && status.isActive) //currentPosition may be higher that the last one we calculated
             songPosition = mPlayer.currentPosition.toLong()
 
         if(status == PlaybackStatus.playing) //resume posting updates
@@ -149,10 +149,10 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
         val trackUri = ContentUris.withAppendedId(
         android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId)
         try{
-            if(status != PlaybackStatus.stopped) { //We are changing songs, do some cleanup and "stop" playback
+            if(status.isActive) { //We are changing songs, do some cleanup and "stop" playback
                 player!!.reset()
                 handler.removeCallbacks(updateRunnable)
-                status = PlaybackStatus.stopped
+                status = PlaybackStatus.ready
             }
             player!!.setDataSource(applicationContext, trackUri);
             player!!.prepareAsync();
@@ -213,7 +213,7 @@ class MusicService : Service() , MediaPlayer.OnPreparedListener, MediaPlayer.OnE
             songPosition = 0
             currentSong = -1
             currentPlayList = songCollection
-            status = PlaybackStatus.stopped
+            status = PlaybackStatus.ready
             initMusicPlayer()
         }
     }

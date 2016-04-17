@@ -204,7 +204,7 @@ class MainTabActivity : MusicActivity(), RealmAdmin, ScrollableActivity {
                 reverSet?.start()
                 reverSet = null
             }
-        } else if(status != PlaybackStatus.stopped && fabIsVisible) {
+        } else if(status.isActive && fabIsVisible) {
             revealMusicPlaybackBar()
         }
         if(status == PlaybackStatus.playing) btnPlayPause?.playing = true

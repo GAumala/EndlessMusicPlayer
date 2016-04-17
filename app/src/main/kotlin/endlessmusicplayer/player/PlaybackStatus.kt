@@ -12,5 +12,10 @@ package endlessmusicplayer.player
  */
 
 enum class PlaybackStatus {
-    stopped, paused, playing
+    ready, paused, playing, stopped;
+
+    val isActive : Boolean
+    get() = (this == paused || this == playing)
+
+
 }
